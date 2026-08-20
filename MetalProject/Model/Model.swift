@@ -78,6 +78,8 @@ class Model {
         (meshDescriptor.attributes[0] as! MDLVertexAttribute).name = MDLVertexAttributePosition
         (meshDescriptor.attributes[1] as! MDLVertexAttribute).name = MDLVertexAttributeTextureCoordinate
         (meshDescriptor.attributes[2] as! MDLVertexAttribute).name = MDLVertexAttributeNormal
+        (meshDescriptor.attributes[3] as! MDLVertexAttribute).name = MDLVertexAttributeTangent
+        (meshDescriptor.attributes[4] as! MDLVertexAttribute).name = MDLVertexAttributeBitangent
         
         let bufferAllocator = MTKMeshBufferAllocator(device: device)
         let asset = MDLAsset(

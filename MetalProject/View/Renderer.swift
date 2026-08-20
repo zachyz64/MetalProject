@@ -69,6 +69,16 @@ class Renderer: NSObject, MTKViewDelegate {
         vertexDescriptor.attributes[2].offset = offset
         vertexDescriptor.attributes[2].bufferIndex = 0
         offset += MemoryLayout<simd_float3>.stride
+        // Tangent
+        vertexDescriptor.attributes[3].format = .float3
+        vertexDescriptor.attributes[3].offset = offset
+        vertexDescriptor.attributes[3].bufferIndex = 0
+        offset += MemoryLayout<simd_float3>.stride
+        // Bitangent
+        vertexDescriptor.attributes[4].format = .float3
+        vertexDescriptor.attributes[4].offset = offset
+        vertexDescriptor.attributes[4].bufferIndex = 0
+        offset += MemoryLayout<simd_float3>.stride
         
         vertexDescriptor.layouts[0].stride = offset
         

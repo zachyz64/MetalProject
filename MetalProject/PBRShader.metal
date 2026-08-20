@@ -15,6 +15,8 @@ struct VertexIn
     float3 position [[attribute(0)]];
     float2 texCoord [[attribute(1)]];
     float3 normal [[attribute(2)]];
+    float3 tangent [[attribute(3)]];
+    float3 biTangent [[attribute(4)]];
 };
 
 struct Fragment
@@ -22,6 +24,8 @@ struct Fragment
     float4 position [[position]];
     float2 texCoord;
     float3 normal;
+    float3 tangent;
+    float3 biTangent;
     float3 cameraPos;
     float3 fragPos;
 };
