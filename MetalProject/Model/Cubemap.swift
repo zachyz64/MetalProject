@@ -58,7 +58,7 @@ class Cubemap {
         ]
     }
     
-    func consume(filename: String, filenameExtension: String, layer: Int32) {
+    func consume(filename: String, filenameExtension: String, layer: Int) {
         
         let newMaterial = Material(device: device,
                                    allocator: allocator,
@@ -67,7 +67,7 @@ class Cubemap {
                                    options: options)
         
         blitCommandEncoder.copy(from: newMaterial.texture!, sourceSlice: 0, sourceLevel: 0,
-                                to: texture, destinationSlice: Int(layer), destinationLevel: 0,
+                                to: texture, destinationSlice: layer, destinationLevel: 0,
                                 sliceCount: 1, levelCount: 1)
         
         tempTextures.append(newMaterial)

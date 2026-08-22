@@ -283,12 +283,12 @@ class Renderer: NSObject, MTKViewDelegate {
         renderEncoder?.setFragmentSamplerState(sampler, index: 0)
         renderEncoder?.setCullMode(.back)
         for actor in scene.actors {
-            draw(renderEncoder: renderEncoder, model: model, modelTransform: &(actor.model))
+            drawLitObject(renderEncoder: renderEncoder, model: model, modelTransform: &(actor.model))
         }
     
         // Render mouse billboard
         renderEncoder?.setCullMode(.none)
-        draw(renderEncoder: renderEncoder, model: mouse, modelTransform: &(scene.mouse.model))
+        drawLitObject(renderEncoder: renderEncoder, model: mouse, modelTransform: &(scene.mouse.model))
     }
     
     func drawUnlitObjects(renderEncoder: MTLRenderCommandEncoder?) {
@@ -420,7 +420,7 @@ class Renderer: NSObject, MTKViewDelegate {
                                         index: 3)
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder?, model: Model, modelTransform: UnsafeMutablePointer<simd_float4x4>) {
+    func drawLitObject(renderEncoder: MTLRenderCommandEncoder?, model: Model, modelTransform: UnsafeMutablePointer<simd_float4x4>) {
         
         renderEncoder?.setVertexBytes(modelTransform,
                                       length: MemoryLayout<simd_float4x4>.stride,
@@ -457,8 +457,7 @@ class Renderer: NSObject, MTKViewDelegate {
                                            offset: vertexBuffer.offset,
                                            index: 0)
             
-            for (submesh, material) in zip(mesh.mesh.submeshes, mesh.materials) {
-                // Draw
+            for submesh in mesh.mesh.submeshes {
                 renderEncoder?.drawIndexedPrimitives(type: .triangle,
                                                      indexCount: submesh.indexCount,
                                                      indexType: submesh.indexType,
@@ -466,6 +465,5 @@ class Renderer: NSObject, MTKViewDelegate {
                                                      indexBufferOffset: 0)
             }
         }
-        
     }
 }
