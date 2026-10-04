@@ -13,7 +13,10 @@
 struct Vertex
 {
     vector_float3 position;
-    vector_float4 color;
+    vector_float2 texCoord;
+    vector_float3 normal;
+    vector_float3 tangent;
+    vector_float3 bitangent;
 };
 
 struct SimpleVertex

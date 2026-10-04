@@ -53,44 +53,36 @@ class Renderer: NSObject, MTKViewDelegate {
 
         // Set up the vertex descriptor
         let vertexDescriptor = MTLVertexDescriptor()
-        var offset: Int = 0
         // Position
         vertexDescriptor.attributes[0].format = .float3
-        vertexDescriptor.attributes[0].offset = offset
+        vertexDescriptor.attributes[0].offset = MemoryLayout.offset(of: \Vertex.position)!
         vertexDescriptor.attributes[0].bufferIndex = 0
-        offset += MemoryLayout<simd_float3>.stride
         // Texture Coordinate
         vertexDescriptor.attributes[1].format = .float2
-        vertexDescriptor.attributes[1].offset = offset
+        vertexDescriptor.attributes[1].offset = MemoryLayout.offset(of: \Vertex.texCoord)!
         vertexDescriptor.attributes[1].bufferIndex = 0
-        offset += MemoryLayout<simd_float2>.stride
         // Normal
         vertexDescriptor.attributes[2].format = .float3
-        vertexDescriptor.attributes[2].offset = offset
+        vertexDescriptor.attributes[2].offset = MemoryLayout.offset(of: \Vertex.normal)!
         vertexDescriptor.attributes[2].bufferIndex = 0
-        offset += MemoryLayout<simd_float3>.stride
         // Tangent
         vertexDescriptor.attributes[3].format = .float3
-        vertexDescriptor.attributes[3].offset = offset
+        vertexDescriptor.attributes[3].offset = MemoryLayout.offset(of: \Vertex.tangent)!
         vertexDescriptor.attributes[3].bufferIndex = 0
-        offset += MemoryLayout<simd_float3>.stride
         // Bitangent
         vertexDescriptor.attributes[4].format = .float3
-        vertexDescriptor.attributes[4].offset = offset
+        vertexDescriptor.attributes[4].offset = MemoryLayout.offset(of: \Vertex.bitangent)!
         vertexDescriptor.attributes[4].bufferIndex = 0
-        offset += MemoryLayout<simd_float3>.stride
-        
-        vertexDescriptor.layouts[0].stride = offset
+
+        vertexDescriptor.layouts[0].stride = MemoryLayout<Vertex>.stride
         
         // Set up vertex descriptor for screenTexture
         let simpleVertexDescriptor = MTLVertexDescriptor()
-        offset = 0
         // Position
         simpleVertexDescriptor.attributes[0].format = .float2
-        simpleVertexDescriptor.attributes[0].offset = offset
+        simpleVertexDescriptor.attributes[0].offset = MemoryLayout.offset(of: \SimpleVertex.position)!
         simpleVertexDescriptor.attributes[0].bufferIndex = 0
-        offset += MemoryLayout<simd_float2>.stride
-        simpleVertexDescriptor.layouts[0].stride = offset
+        simpleVertexDescriptor.layouts[0].stride = MemoryLayout<SimpleVertex>.stride
         
         self.model = Model(device: device,
                            allocator: meshAllocator,

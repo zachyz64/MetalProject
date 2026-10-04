@@ -88,6 +88,7 @@ fragment float4 fragmentPBR(Fragment frag [[stage_in]],
     // 1: Normal
     texValues.normal = float3(objectTexture.sample(samplerObject, frag.texCoord, 1));
     texValues.normal = normalize(texValues.normal * 2.0 - 1.0);
+    //texValues.normal = frag.normal;
     
     // 2: Specular
     texValues.specular = float3(objectTexture.sample(samplerObject, frag.texCoord, 2));
@@ -105,12 +106,12 @@ fragment float4 fragmentPBR(Fragment frag [[stage_in]],
     // Add Lighting
     float3 result = float3(0.0);
     
-    //result += 0.1 * texValues.color; // Ambient
-    result += 0.3 * applyPBRDirectionalLight(sun, texValues, fragCamera);
-    result += 0.2 * applyPBRSpotlight(frag.fragPos, spotlight, texValues, fragCamera);
+    result += 0.2 * texValues.color; // Ambient
+    result += 0.8 * applyPBRDirectionalLight(sun, texValues, fragCamera);
+    result += 0.0 * applyPBRSpotlight(frag.fragPos, spotlight, texValues, fragCamera);
     for (uint i = 0; i < 2; ++i)
     {
-        result += 0.25 * applyPBRPointlight(frag.fragPos, pointlights[i], texValues, fragCamera);
+        result += 0.0 * applyPBRPointlight(frag.fragPos, pointlights[i], texValues, fragCamera);
     }
 
     return float4(result, alpha);
@@ -165,7 +166,7 @@ float3 applyPBRPointlight(float3 position, Pointlight light, PBRValues values, f
     
     // Specular
     lightAmount = pow(max(0.0, dot(values.normal, halfVec)), 64);
-    color += values.specular * values.color * light.color;
+    color += values.specular * values.color * light.color * lightAmount;
     
     return color;
 }
