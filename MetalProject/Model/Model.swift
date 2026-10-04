@@ -106,8 +106,10 @@ class Model {
         }
         
         for (mdlMesh, mtkMesh) in zip(mdlMeshes, mtkMeshes) {
+            mdlMesh.addOrthTanBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate,
+                                    normalAttributeNamed: MDLVertexAttributeNormal,
+                                    tangentAttributeNamed: MDLVertexAttributeTangent)
             var materials = [Material]()
-
             for mdlSubmesh in mdlMesh.submeshes as! [MDLSubmesh] {
                 let material = Material(mdlMaterial: mdlSubmesh.material, textureLoader: textureLoader, options: options)
                 materials.append(material)
