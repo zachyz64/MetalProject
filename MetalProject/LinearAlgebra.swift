@@ -99,4 +99,12 @@ class Matrix4x4 {
             [ 0,           0,          0, 1]
         )
     }
+    
+    static func toFloat3(_ v: simd_float4) -> simd_float3 {
+        return simd_float3(v[0], v[1], v[2])
+    }
+    
+    static func toFloat3x3(_ matrix: simd_float4x4) -> simd_float3x3 {
+        return simd_float3x3(toFloat3(matrix[0]), toFloat3(matrix[1]), toFloat3(matrix[2]))
+    }
 }

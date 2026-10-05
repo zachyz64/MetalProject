@@ -16,7 +16,6 @@ struct VertexIn
     float2 texCoord [[attribute(1)]];
     float3 normal [[attribute(2)]];
     float3 tangent [[attribute(3)]];
-    float3 biTangent [[attribute(4)]];
 };
 
 struct Fragment
@@ -25,9 +24,9 @@ struct Fragment
     float2 texCoord;
     float3 normal;
     float3 tangent;
-    float3 biTangent;
     float3 cameraPos;
     float3 fragPos;
+    float3 T, B, N;
 };
 
 struct PBRValues
@@ -50,7 +49,8 @@ float2 parallaxMapping(float height, float2 texCoords, float3 fragCam);
 
 vertex Fragment vertexPBR(const VertexIn vertex_in [[stage_in]],
                           constant matrix_float4x4& model [[buffer(1)]],
-                          constant CameraParameters &camera [[buffer(2)]])
+                          constant CameraParameters &camera [[buffer(2)]],
+                          constant matrix_float3x3& normalMatrix [[buffer(3)]])
 {
     matrix_float3x3 model3x3;
     model3x3.columns[0] = model.columns[0].xyz;
@@ -63,6 +63,11 @@ vertex Fragment vertexPBR(const VertexIn vertex_in [[stage_in]],
     frag.normal = model3x3 * vertex_in.normal;
     frag.cameraPos = float3(model * float4(camera.position, 1.0));
     frag.fragPos = float3(model * float4(vertex_in.position, 1.0));
+    
+    frag.T = normalize(normalMatrix * vertex_in.tangent);
+    frag.N = normalize(normalMatrix * vertex_in.normal);
+    frag.B = cross(frag.N, frag.T);
+    
     return frag;
 }
 
@@ -87,12 +92,16 @@ fragment float4 fragmentPBR(Fragment frag [[stage_in]],
     
     // 1: Normal
     texValues.normal = float3(objectTexture.sample(samplerObject, frag.texCoord, 1));
+    //texValues.normal = float3(0.5, 0.5, 1.0);
+
     texValues.normal = normalize(texValues.normal * 2.0 - 1.0);
-    //texValues.normal = frag.normal;
+    float3x3 TBN = float3x3(frag.T, frag.B, frag.N);
+    texValues.normal = normalize(TBN * texValues.normal);
     
     // 2: Specular
     texValues.specular = float3(objectTexture.sample(samplerObject, frag.texCoord, 2));
     texValues.specular = normalize(texValues.specular);
+    
     // 3: Roughness
     
     // 5: Bump
@@ -108,10 +117,10 @@ fragment float4 fragmentPBR(Fragment frag [[stage_in]],
     
     result += 0.2 * texValues.color; // Ambient
     result += 0.8 * applyPBRDirectionalLight(sun, texValues, fragCamera);
-    result += 0.0 * applyPBRSpotlight(frag.fragPos, spotlight, texValues, fragCamera);
+    result += 0.4 * applyPBRSpotlight(frag.fragPos, spotlight, texValues, fragCamera);
     for (uint i = 0; i < 2; ++i)
     {
-        result += 0.0 * applyPBRPointlight(frag.fragPos, pointlights[i], texValues, fragCamera);
+        result += 0.8 * applyPBRPointlight(frag.fragPos, pointlights[i], texValues, fragCamera);
     }
 
     return float4(result, alpha);

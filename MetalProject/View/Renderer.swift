@@ -69,10 +69,6 @@ class Renderer: NSObject, MTKViewDelegate {
         vertexDescriptor.attributes[3].format = .float3
         vertexDescriptor.attributes[3].offset = MemoryLayout.offset(of: \Vertex.tangent)!
         vertexDescriptor.attributes[3].bufferIndex = 0
-        // Bitangent
-        vertexDescriptor.attributes[4].format = .float3
-        vertexDescriptor.attributes[4].offset = MemoryLayout.offset(of: \Vertex.bitangent)!
-        vertexDescriptor.attributes[4].bufferIndex = 0
 
         vertexDescriptor.layouts[0].stride = MemoryLayout<Vertex>.stride
         
@@ -442,7 +438,12 @@ class Renderer: NSObject, MTKViewDelegate {
         renderEncoder?.setVertexBytes(modelTransform,
                                       length: MemoryLayout<simd_float4x4>.stride,
                                       index: 1)
-        
+
+        let transposeInverse = simd_transpose(__invert_f4(modelTransform.pointee))
+        var normalMatrix = Matrix4x4.toFloat3x3(transposeInverse)
+        renderEncoder?.setVertexBytes(&normalMatrix,
+                                      length: MemoryLayout<simd_float3x3>.stride,
+                                      index: 3)
         for mesh in model.meshes {
             let vertexBuffer = mesh.mesh.vertexBuffers[0]
             renderEncoder?.setVertexBuffer(vertexBuffer.buffer,
